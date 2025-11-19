@@ -31,6 +31,11 @@ struct ChatMessage: Identifiable, Codable, Hashable, Equatable {
     var deliveredAt: Date?
     var readAt: Date?
 
+    // Ephemeral (Feature 6)
+    var isEphemeral: Bool             // Whether this message auto-deletes
+    var expiresAt: Date?              // When the message will be deleted
+    var isExpired: Bool               // Whether the message has expired
+
     // MARK: - Initialization
 
     init(
@@ -41,7 +46,9 @@ struct ChatMessage: Identifiable, Codable, Hashable, Equatable {
         timestamp: Date = Date(),
         isEncrypted: Bool = false,
         isRead: Bool = false,
-        deliveryStatus: MessageDeliveryStatus = .pending
+        deliveryStatus: MessageDeliveryStatus = .pending,
+        isEphemeral: Bool = false,
+        expiresAt: Date? = nil
     ) {
         self.id = id
         self.text = text
@@ -51,6 +58,9 @@ struct ChatMessage: Identifiable, Codable, Hashable, Equatable {
         self.isEncrypted = isEncrypted
         self.isRead = isRead
         self.deliveryStatus = deliveryStatus
+        self.isEphemeral = isEphemeral
+        self.expiresAt = expiresAt
+        self.isExpired = false
     }
 
     // MARK: - Computed Properties
@@ -98,6 +108,33 @@ struct ChatMessage: Identifiable, Codable, Hashable, Equatable {
         return text
     }
 
+    // MARK: - Ephemeral Message Properties (Feature 6)
+
+    /// Time remaining until message expires (in seconds)
+    var timeRemainingSeconds: TimeInterval? {
+        guard isEphemeral, let expiresAt = expiresAt else {
+            return nil
+        }
+        let remaining = expiresAt.timeIntervalSince(Date())
+        return max(0, remaining)
+    }
+
+    /// Whether the message should be deleted now
+    var shouldDelete: Bool {
+        guard isEphemeral else { return false }
+        guard let expiresAt = expiresAt else { return false }
+        return Date() >= expiresAt || isExpired
+    }
+
+    /// Countdown string for ephemeral messages (e.g., "5s")
+    var countdownString: String {
+        guard let remaining = timeRemainingSeconds else {
+            return ""
+        }
+        let seconds = Int(ceil(remaining))
+        return "\(seconds)s"
+    }
+
     // MARK: - Update Methods
 
     /// Mark message as delivered
@@ -120,6 +157,11 @@ struct ChatMessage: Identifiable, Codable, Hashable, Equatable {
         deliveryStatus = .failed
     }
 
+    /// Mark message as expired (for ephemeral messages)
+    mutating func markAsExpired() {
+        isExpired = true
+    }
+
     // MARK: - Static Constructors
 
     /// Create a text message
@@ -134,6 +176,27 @@ struct ChatMessage: Identifiable, Codable, Hashable, Equatable {
             receiverId: receiverId,
             timestamp: Date(),
             deliveryStatus: .pending
+        )
+    }
+
+    /// Create an ephemeral message (auto-deletes after 10 seconds)
+    static func ephemeralMessage(
+        text: String,
+        from senderId: String,
+        to receiverId: String,
+        lifetimeSeconds: TimeInterval = 10.0
+    ) -> ChatMessage {
+        let now = Date()
+        let expiresAt = now.addingTimeInterval(lifetimeSeconds)
+
+        return ChatMessage(
+            text: text,
+            senderId: senderId,
+            receiverId: receiverId,
+            timestamp: now,
+            deliveryStatus: .pending,
+            isEphemeral: true,
+            expiresAt: expiresAt
         )
     }
 
