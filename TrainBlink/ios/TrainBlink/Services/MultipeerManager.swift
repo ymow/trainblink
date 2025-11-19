@@ -55,6 +55,9 @@ final class MultipeerManager: NSObject, ObservableObject {
     // Event publisher
     let eventPublisher = PassthroughSubject<MultipeerEvent, Never>()
 
+    // Data received callback (for Feature 3: Content Sharing)
+    var onDataReceived: ((Data, String) -> Void)?
+
     // Cleanup timer
     private var cleanupTimer: Timer?
 
@@ -207,6 +210,11 @@ final class MultipeerManager: NSObject, ObservableObject {
             .sorted { ($0.signalStrength ?? 0) > ($1.signalStrength ?? 0) }
             .prefix(limit)
             .map { $0 }
+    }
+
+    /// Get current session (for content sharing)
+    func getSession() -> MCSession? {
+        return session
     }
 
     // MARK: - Private Methods
@@ -423,8 +431,12 @@ extension MultipeerManager: MCSessionDelegate {
         didReceive data: Data,
         fromPeer peerID: MCPeerID
     ) {
-        // TODO: Implement data receiving for Feature 3 (Content Sharing)
-        print("📦 Received data from: \(peerID.displayName)")
+        print("📦 Received data from: \(peerID.displayName) (\(data.count) bytes)")
+
+        // Forward to content sharing manager (Feature 3)
+        DispatchQueue.main.async { [weak self] in
+            self?.onDataReceived?(data, peerID.displayName)
+        }
     }
 
     func session(

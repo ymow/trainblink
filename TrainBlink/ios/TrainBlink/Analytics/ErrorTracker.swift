@@ -24,6 +24,8 @@ enum TrainBlinkError: Error, LocalizedError {
 
     // Content Transfer Errors
     case contentTransferFailed(contentType: ContentType, reason: String)
+    case contentSendFailed(reason: String)
+    case contentReceiveFailed(reason: String)
     case contentTooLarge(contentType: ContentType, size: Int, maxSize: Int)
     case contentEncryptionFailed
 
@@ -58,6 +60,10 @@ enum TrainBlinkError: Error, LocalizedError {
 
         case .contentTransferFailed(let type, let reason):
             return "Content transfer failed (\(type.rawValue)): \(reason)"
+        case .contentSendFailed(let reason):
+            return "Content send failed: \(reason)"
+        case .contentReceiveFailed(let reason):
+            return "Content receive failed: \(reason)"
         case .contentTooLarge(let type, let size, let maxSize):
             return "Content too large (\(type.rawValue)): \(size) bytes (max: \(maxSize))"
         case .contentEncryptionFailed:

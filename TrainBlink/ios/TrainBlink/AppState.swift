@@ -8,6 +8,7 @@
 
 import Foundation
 import Combine
+import UIKit
 
 /// Global app state manager
 class AppState: ObservableObject {
@@ -23,18 +24,33 @@ class AppState: ObservableObject {
     @Published var connectedPeers: [Peer] = []
     @Published var isDiscovering: Bool = false
 
+    // Content Sharing (Feature 3)
+    @Published var pendingContent: [ContentItem] = []
+    @Published var sentContent: [ContentItem] = []
+    @Published var receivedContent: [ContentItem] = []
+
     // MARK: - Services
 
     let geofenceManager = GeofenceManager()
     let multipeerManager = MultipeerManager()
+    let contentSharingManager: ContentSharingManager
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Initialization
 
     init() {
+        // Initialize content sharing manager with multipeer manager
+        self.contentSharingManager = ContentSharingManager(multipeerManager: multipeerManager)
+
         print("📱 AppState initialized with session: \(sessionID)")
         setupGeofenceObservers()
         setupMultipeerObservers()
+        setupContentSharingObservers()
+
+        // Wire up multipeer data received callback to content sharing
+        multipeerManager.onDataReceived = { [weak self] data, fromPeerId in
+            self?.contentSharingManager.handleReceivedData(data, fromPeerId: fromPeerId)
+        }
     }
 
     // MARK: - Setup
@@ -79,6 +95,25 @@ class AppState: ObservableObject {
             .store(in: &cancellables)
     }
 
+    private func setupContentSharingObservers() {
+        // Observe content sharing manager state
+        contentSharingManager.$pendingItems
+            .assign(to: &$pendingContent)
+
+        contentSharingManager.$sentItems
+            .assign(to: &$sentContent)
+
+        contentSharingManager.$receivedItems
+            .assign(to: &$receivedContent)
+
+        // Observe content sharing events
+        contentSharingManager.eventPublisher
+            .sink { [weak self] event in
+                self?.handleContentSharingEvent(event)
+            }
+            .store(in: &cancellables)
+    }
+
     // MARK: - Event Handling
 
     private func handleGeofenceEvent(_ event: GeofenceEvent) {
@@ -99,7 +134,11 @@ class AppState: ObservableObject {
             multipeerManager.stopDiscovery()
             print("📡 P2P discovery stopped")
 
-            // Future: Cleanup (close chats, delete content)
+            // Cleanup: Delete all content (Feature 3)
+            contentSharingManager.clearAll()
+            print("🗑️ All content cleared")
+
+            // Future: Close chats, etc.
 
         case .error(let error):
             print("❌ App: Geofence error - \(error.localizedDescription)")
@@ -132,6 +171,43 @@ class AppState: ObservableObject {
         }
     }
 
+    private func handleContentSharingEvent(_ event: ContentSharingEvent) {
+        switch event {
+        case .contentReadyToSend(let item):
+            print("📤 App: Content ready to send - \(item.id)")
+
+        case .contentSendStarted(let item):
+            print("📤 App: Sending content - \(item.id)")
+
+        case .contentSendProgress(let item, let progress):
+            print("📤 App: Content sending \(Int(progress * 100))% - \(item.id)")
+
+        case .contentSent(let item):
+            print("✅ App: Content sent - \(item.id)")
+
+        case .contentSendFailed(let item, let error):
+            print("❌ App: Content send failed - \(error.localizedDescription)")
+
+        case .contentReceiveStarted(let item):
+            print("📥 App: Receiving content - \(item.id)")
+
+        case .contentReceiveProgress(let item, let progress):
+            print("📥 App: Content receiving \(Int(progress * 100))% - \(item.id)")
+
+        case .contentReceived(let item):
+            print("✅ App: Content received - \(item.id)")
+
+        case .contentReceiveFailed(let item, let error):
+            print("❌ App: Content receive failed - \(error.localizedDescription)")
+
+        case .aiReviewStarted(let item):
+            print("🤖 App: AI review started - \(item.id)")
+
+        case .aiReviewCompleted(let item, let approved):
+            print("🤖 App: AI review completed - \(item.id): \(approved ? "APPROVED" : "REJECTED")")
+        }
+    }
+
     // MARK: - Methods
 
     // Geofencing methods
@@ -160,4 +236,31 @@ class AppState: ObservableObject {
     func disconnect(from peer: Peer) {
         multipeerManager.disconnect(from: peer)
     }
+
+    // Content sharing methods (Feature 3)
+    func createTextContent(text: String) -> Result<ContentItem, ContentSharingError> {
+        return contentSharingManager.createTextContent(
+            text: text,
+            senderId: sessionID
+        )
+    }
+
+    func createPhotoContent(image: UIImage) -> Result<ContentItem, ContentSharingError> {
+        return contentSharingManager.createPhotoContent(
+            image: image,
+            senderId: sessionID
+        )
+    }
+
+    func reviewContent(contentId: String) async -> Result<ContentItem, ContentSharingError> {
+        return await contentSharingManager.reviewWithAI(contentId: contentId)
+    }
+
+    func sendContent(contentId: String, toPeerId: String) async -> Result<Void, ContentSharingError> {
+        return await contentSharingManager.sendContent(
+            contentId: contentId,
+            toPeerId: toPeerId
+        )
+    }
 }
+

@@ -138,6 +138,14 @@ final class AnalyticsManager {
         logEvent("content_selection_started", parameters: parameters)
     }
 
+    func logContentCreated(contentType: String, fileSizeMB: Double) {
+        let parameters: [String: Any] = [
+            "content_type": contentType,
+            "file_size_mb": String(format: "%.2f", fileSizeMB)
+        ]
+        logEvent("content_created", parameters: parameters)
+    }
+
     func logContentReviewedByAI(
         contentType: ContentType,
         reviewResult: AIReviewResult,
@@ -154,6 +162,37 @@ final class AnalyticsManager {
         Crashlytics.crashlytics().log(
             "AI review: \(contentType.rawValue) -> \(reviewResult.rawValue) in \(reviewDurationMs)ms"
         )
+    }
+
+    func logContentReviewedByAI(
+        contentType: String,
+        reviewResult: String,
+        reviewDurationMs: Int
+    ) {
+        let parameters: [String: Any] = [
+            "content_type": contentType,
+            "review_result": reviewResult,
+            "review_duration_ms": reviewDurationMs
+        ]
+        logEvent("content_reviewed_by_ai", parameters: parameters)
+
+        // Log to Crashlytics for AI performance monitoring
+        Crashlytics.crashlytics().log(
+            "AI review: \(contentType) -> \(reviewResult) in \(reviewDurationMs)ms"
+        )
+    }
+
+    func logContentSendStarted(
+        contentType: String,
+        fileSizeMB: Double,
+        receiverId: String
+    ) {
+        let parameters: [String: Any] = [
+            "content_type": contentType,
+            "file_size_mb": String(format: "%.2f", fileSizeMB),
+            "receiver_id_hash": receiverId.hashValue
+        ]
+        logEvent("content_send_started", parameters: parameters)
     }
 
     func logContentSent(
@@ -175,6 +214,25 @@ final class AnalyticsManager {
         logEvent("content_sent", parameters: parameters)
     }
 
+    func logContentSent(
+        contentType: String,
+        fileSizeMB: Double,
+        transferDurationMs: Int,
+        transferSpeedKBps: Int
+    ) {
+        let parameters: [String: Any] = [
+            "content_type": contentType,
+            "file_size_mb": String(format: "%.2f", fileSizeMB),
+            "transfer_duration_ms": transferDurationMs,
+            "transfer_speed_kbps": transferSpeedKBps
+        ]
+
+        // Mark as conversion event
+        parameters[AnalyticsParameterValue] = 1
+
+        logEvent("content_sent", parameters: parameters)
+    }
+
     func logContentReceived(
         contentType: ContentType,
         senderEncounterCount: Int
@@ -182,6 +240,19 @@ final class AnalyticsManager {
         let parameters: [String: Any] = [
             "content_type": contentType.rawValue,
             "sender_encounter_count": senderEncounterCount
+        ]
+        logEvent("content_received", parameters: parameters)
+    }
+
+    func logContentReceived(
+        contentType: String,
+        fileSizeMB: Double,
+        senderId: String
+    ) {
+        let parameters: [String: Any] = [
+            "content_type": contentType,
+            "file_size_mb": String(format: "%.2f", fileSizeMB),
+            "sender_id_hash": senderId.hashValue
         ]
         logEvent("content_received", parameters: parameters)
     }

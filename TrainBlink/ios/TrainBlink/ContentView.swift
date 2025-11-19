@@ -159,6 +159,17 @@ struct ContentView: View {
 
                     Divider()
 
+                    // Content Sharing (Feature 3)
+                    VStack(alignment: .leading, spacing: 10) {
+                        ContentSharingView()
+                    }
+                    .padding()
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
+                    .shadow(radius: 2)
+
+                    Divider()
+
                     // Other Tests
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Other Tests")
