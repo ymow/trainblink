@@ -1,0 +1,269 @@
+# TrainBlink - Claude Code Configuration
+# This file guides Claude Code's behavior for this project
+
+# Project metadata
+project_name: "TrainBlink"
+project_version: "2.3"
+platform: "iOS"
+language: "Swift 5.9+"
+
+# Primary documentation
+primary_docs:
+  - "PRD.md"                    # Product Requirements Document
+  - "claude.md"                 # Development principles and guidelines
+  - "REQUIREMENTS.md"           # Technical requirements
+  - "README.md"                 # Project overview
+
+# Development guidelines
+development:
+  # Always follow PRD specifications exactly
+  prd_strict_mode: true
+
+  # Architecture pattern
+  architecture: "MVVM + Combine"
+
+  # Testing requirements
+  testing:
+    minimum_coverage: 90
+    required_types:
+      - "unit"
+      - "integration"
+      - "performance"
+      - "memory_leak"
+
+  # Code style
+  code_style:
+    naming: "Swift API Design Guidelines"
+    documentation: "Public APIs only"
+    comments: "Complex logic and PRD references only"
+
+  # Git workflow
+  git:
+    branch_pattern: "claude/[feature-name]-[session-id]"
+    commit_format: "conventional"
+    required_checks:
+      - "tests_passing"
+      - "no_warnings"
+      - "coverage_90_plus"
+
+# Feature development process
+feature_workflow:
+  steps:
+    1: "Review PRD section"
+    2: "Plan implementation (TodoWrite)"
+    3: "Create models"
+    4: "Implement services"
+    5: "Update viewmodel"
+    6: "Create/update UI"
+    7: "Write tests (90%+ coverage)"
+    8: "Write documentation"
+    9: "Manual testing"
+    10: "Commit and push"
+
+  completion_criteria:
+    - "PRD requirements met"
+    - "90%+ test coverage"
+    - "All tests passing"
+    - "Documentation complete"
+    - "Firebase integrated"
+    - "Manual testing done"
+
+# File organization
+file_structure:
+  models: "TrainBlink/ios/TrainBlink/Models/"
+  services: "TrainBlink/ios/TrainBlink/Services/"
+  views: "TrainBlink/ios/TrainBlink/Views/"
+  analytics: "TrainBlink/ios/TrainBlink/Analytics/"
+  tests: "TrainBlink/ios/TrainBlinkTests/"
+  docs: "TrainBlink/docs/"
+  resources: "TrainBlink/ios/TrainBlink/Resources/"
+
+# Coding conventions
+coding_conventions:
+  # Language features
+  prefer:
+    - "async/await over completion handlers"
+    - "Combine over NotificationCenter"
+    - "SwiftUI over UIKit"
+    - "@Published over manual observers"
+    - "enum over string constants"
+
+  avoid:
+    - "force unwrapping (!)"
+    - "force try (try!)"
+    - "implicitly unwrapped optionals"
+    - "magic numbers"
+    - "commented-out code"
+
+  # Error handling
+  error_handling: "explicit (do-catch, guard, if let)"
+
+  # Memory management
+  memory:
+    - "Use [weak self] in closures"
+    - "Remove observers in deinit"
+    - "Test for retain cycles"
+
+  # Threading
+  threading:
+    - "UI updates on main thread"
+    - "Heavy work on background queue"
+    - "Use async/await for async operations"
+
+# Firebase integration
+firebase:
+  required_events_per_feature: 6
+
+  event_structure:
+    required_params:
+      - "timestamp"
+      - "session_id"
+      - "app_version"
+
+  custom_keys:
+    - "current_station"
+    - "is_in_station"
+    - "connected_peer_count"
+    - "session_id"
+
+  performance_traces:
+    - "app_launch"
+    - "ai_inference"
+    - "content_transfer"
+    - "p2p_connection"
+
+# Testing patterns
+testing_patterns:
+  unit_tests:
+    setup: "Use setUp() and tearDown()"
+    naming: "test[Method][Scenario]"
+    assertions: "One logical assertion per test"
+
+  async_tests:
+    use: "XCTestExpectation"
+    timeout: "2.0 seconds default, 5.0 for slow operations"
+
+  combine_tests:
+    use: "sink + expectation"
+    cancellables: "Store in Set<AnyCancellable>"
+
+  performance_tests:
+    use: "measure block"
+    iterations: "1000 for fast operations"
+
+  memory_tests:
+    use: "weak references + autoreleasepool"
+    verify: "XCTAssertNil after pool"
+
+# Documentation requirements
+documentation:
+  per_feature:
+    - "docs/FEATURE_X.md"
+    - "TESTING_GUIDE.md section"
+    - "README.md update"
+
+  code_comments:
+    required_for:
+      - "PRD-specific requirements"
+      - "Complex algorithms"
+      - "Workarounds"
+
+    not_required_for:
+      - "Self-explanatory code"
+      - "Obvious logic"
+
+  markdown_format:
+    - "GitHub Flavored Markdown"
+    - "Code blocks with language tags"
+    - "Tables for structured data"
+
+# Security and privacy
+security:
+  mandates:
+    - "No server communication"
+    - "No internet requirement"
+    - "No data persistence beyond session"
+    - "Auto-delete on station exit"
+    - "Temporary UUIDs only"
+    - "AI content review before sharing"
+
+  forbidden:
+    - "Server API calls"
+    - "Cloud storage"
+    - "User accounts"
+    - "Login system"
+    - "PII in analytics"
+    - "Third-party SDKs (except Firebase)"
+
+# Performance targets
+performance:
+  geofencing:
+    entry_detection: "< 30s"
+    exit_detection: "< 3min"
+    battery_impact: "< 5% per hour"
+
+  p2p:
+    discovery_time: "< 5s"
+    connection_time: "< 3s"
+    transfer_speed: "> 100 KB/s"
+
+  ai:
+    nsfw_detection: "< 500ms"
+    face_detection: "< 300ms"
+    model_load: "< 2s"
+
+# Common patterns for this project
+patterns:
+  singleton:
+    use_for: "Services, Databases, Managers"
+    example: "static let shared = MyService()"
+
+  publisher:
+    use_for: "Events, State changes"
+    example: "let eventPublisher = PassthroughSubject<Event, Never>()"
+
+  delayed_execution:
+    main_thread: "DispatchQueue.main.asyncAfter(deadline: .now() + delay)"
+    background: "DispatchQueue.global(qos: .background).async"
+
+  timer:
+    use: "Timer.scheduledTimer(withTimeInterval:repeats:)"
+    cleanup: "timer?.invalidate(); timer = nil"
+
+# Project-specific reminders
+reminders:
+  - "Always check PRD before implementing"
+  - "Log all critical events to Firebase"
+  - "Write tests as you code (not after)"
+  - "Document complex logic with PRD references"
+  - "Use TodoWrite for multi-step features"
+  - "Test for memory leaks"
+  - "Run all tests before committing"
+  - "Update README when adding features"
+
+# Current progress
+progress:
+  completed:
+    - "Feature 12: Firebase Monitoring & Analytics"
+    - "Feature 1: Geofencing System"
+    - "Unit & Integration tests for Feature 1"
+
+  in_progress: null
+
+  next:
+    - "Feature 2: P2P Discovery (MultipeerConnectivity)"
+    - "Feature 3: Content Sharing"
+    - "Feature 4: AI Safety (Core ML)"
+
+# Quick reference commands
+commands:
+  build: "xcodebuild -scheme TrainBlink -destination 'platform=iOS Simulator,name=iPhone 15'"
+  test: "xcodebuild test -scheme TrainBlink -destination 'platform=iOS Simulator,name=iPhone 15' -enableCodeCoverage YES"
+  coverage: "xcrun xcov --minimum_coverage_percentage 90"
+
+# Contact and support
+support:
+  prd_location: "PRD.md"
+  dev_guide: "claude.md"
+  requirements: "REQUIREMENTS.md"
+  testing_guide: "docs/TESTING_GUIDE.md"

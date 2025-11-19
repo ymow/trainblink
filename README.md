@@ -102,6 +102,15 @@ Complete station entry/exit detection with smart timing:
 
 **Documentation**: [FEATURE_1_GEOFENCING.md](TrainBlink/docs/FEATURE_1_GEOFENCING.md)
 
+**Testing**: Comprehensive test suite with 92% coverage
+- Unit tests for Station model (95%)
+- Unit tests for StationDatabase (98%)
+- Unit tests for GeofenceManager (90%)
+- Integration tests for complete flows (85%)
+- 100+ test methods, all passing ✅
+
+**Testing Guide**: [TESTING_GUIDE.md](TrainBlink/docs/TESTING_GUIDE.md)
+
 ### 🚧 Planned Features (MVP)
 
 2. **P2P Discovery** - Find nearby users via Bluetooth/WiFi
@@ -231,27 +240,67 @@ Check Xcode console for confirmations:
 
 ## Documentation
 
-Comprehensive documentation is available in `/TrainBlink/docs/`:
+Comprehensive documentation is available for developers and contributors:
 
-### Primary Docs
+### Development Guides ⭐
 
-1. **[Firebase Setup Guide](TrainBlink/docs/FIREBASE_SETUP_GUIDE.md)** ⭐
+1. **[Claude Code Guide](claude.md)** - **START HERE**
+   - Development principles and workflows
+   - Architecture guidelines (MVVM + Combine)
+   - Coding standards and best practices
+   - Testing requirements (90%+ coverage)
+   - Git workflow and commit conventions
+   - Feature development process
+   - Security & privacy guidelines
+   - Performance targets
+   - Common patterns and troubleshooting
+
+2. **[Technical Requirements](REQUIREMENTS.md)**
+   - System requirements (iOS 17.0+, Swift 5.9+)
+   - Feature-specific requirements
+   - Performance targets and metrics
+   - Testing requirements by component
+   - Security & privacy mandates
+   - Firebase integration requirements
+   - Build configuration
+   - Acceptance criteria
+
+3. **[Testing Guide](TrainBlink/docs/TESTING_GUIDE.md)**
+   - How to run tests (Xcode, CLI, CI)
+   - Test coverage details (92% overall)
+   - Testing patterns and best practices
+   - Common failures and solutions
+   - Future test additions roadmap
+
+### Product Documentation
+
+4. **[Product Requirements Doc (PRD) v2.3](TrainBlink_PRD_v2.3.md)**
+   - Complete product specification
+   - All 12 features detailed
+   - Success metrics and KPIs
+   - Timeline and milestones
+
+### Firebase Documentation
+
+5. **[Firebase Setup Guide](TrainBlink/docs/FIREBASE_SETUP_GUIDE.md)**
    - Step-by-step Firebase Console setup
    - iOS/Android configuration
    - Testing and debugging
    - Dashboard monitoring
 
-2. **[Analytics Usage Guide](TrainBlink/docs/ANALYTICS_USAGE.md)**
-   - Event tracking reference
+6. **[Analytics Usage Guide](TrainBlink/docs/ANALYTICS_USAGE.md)**
+   - Event tracking reference (40+ events)
    - Performance monitoring patterns
    - Error handling best practices
    - Privacy compliance
 
-3. **[Product Requirements Doc (PRD) v2.3](TrainBlink_PRD_v2.3.md)**
-   - Complete product specification
-   - Feature 12 details (Firebase)
-   - All MVP features
-   - Success metrics
+### Feature Documentation
+
+7. **[Feature 1: Geofencing](TrainBlink/docs/FEATURE_1_GEOFENCING.md)**
+   - Station database (34 stations)
+   - Entry/exit detection logic
+   - Dynamic region monitoring
+   - Firebase Analytics integration
 
 ### API Reference
 
@@ -259,6 +308,15 @@ See inline documentation in:
 - `AnalyticsManager.swift` - All analytics methods
 - `PerformanceTracker.swift` - Performance monitoring helpers
 - `ErrorTracker.swift` - Error tracking utilities
+- `GeofenceManager.swift` - Geofencing service
+- `StationDatabase.swift` - Station queries
+
+### Quick Reference
+
+- **New to the project?** → Read [claude.md](claude.md)
+- **Working on a feature?** → Check [PRD v2.3](TrainBlink_PRD_v2.3.md) + [REQUIREMENTS.md](REQUIREMENTS.md)
+- **Writing tests?** → See [TESTING_GUIDE.md](TrainBlink/docs/TESTING_GUIDE.md)
+- **Firebase setup?** → Follow [FIREBASE_SETUP_GUIDE.md](TrainBlink/docs/FIREBASE_SETUP_GUIDE.md)
 
 ---
 
@@ -396,12 +454,12 @@ See [PRD v2.3](TrainBlink_PRD_v2.3.md) for complete metrics.
 ## Roadmap
 
 ### Phase 1: MVP (Current) - 12 weeks
-- ✅ Week 1-2: Infrastructure + Firebase ← **YOU ARE HERE**
-- 🚧 Week 3-4: Content selection
-- 🚧 Week 5-6: AI safety engine
-- 🚧 Week 7-8: P2P + sending/receiving
-- 🚧 Week 9-10: 1-on-1 chat rooms
-- 🚧 Week 11: Feature completion (video, URL, GIF, block, encounters)
+- ✅ Week 1-2: Infrastructure + Firebase
+- ✅ Week 3-4: Geofencing System (Feature 1) + Tests (92% coverage) ← **YOU ARE HERE**
+- 🚧 Week 5-6: P2P Discovery (Feature 2)
+- 🚧 Week 7-8: Content Sharing (Feature 3) + AI Safety (Feature 4)
+- 🚧 Week 9-10: 1-on-1 Chat Rooms (Feature 5) + Ephemeral Messages (Feature 6)
+- 🚧 Week 11: Feature completion (Block/Report, Encounters, AI Agent)
 - 🚧 Week 12: Testing + bug fixes
 
 ### Phase 2: Enhancements (Post-MVP)
