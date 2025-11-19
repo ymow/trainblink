@@ -10,9 +10,11 @@ import com.google.android.gms.maps.model.LatLng
 data class Station(
     val id: String,
     val name: String,
+    val nameEn: String = "",
     val type: StationType,
     val location: LatLng,
     val geofenceRadiusMeters: Double = 500.0,
+    val lines: List<String> = emptyList(),
     val address: String? = null,
     val isActive: Boolean = true
 ) {
@@ -95,7 +97,8 @@ data class Station(
  */
 enum class StationType(val displayName: String) {
     TRA("TRA"),
-    THSR("THSR");
+    THSR("THSR"),
+    MRT("MRT");
 
     companion object {
         fun fromString(value: String): StationType {

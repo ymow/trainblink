@@ -35,8 +35,9 @@ class GeofenceManager(private val context: Context) {
     private val _currentStation = MutableStateFlow<Station?>(null)
     val currentStation: StateFlow<Station?> = _currentStation.asStateFlow()
 
-    // All stations to monitor (limit: 100 on Android)
-    private val stationsToMonitor = Station.samples // In production, use all 34 stations
+    // All stations to monitor (limit: 100 on Android, vs 20 on iOS)
+    private val stationDatabase get() = TrainBlinkApplication.instance.stationDatabase
+    private val stationsToMonitor get() = stationDatabase.allStations.take(100)
 
     // Pending Intent for geofence transitions
     private val geofencePendingIntent: PendingIntent by lazy {
