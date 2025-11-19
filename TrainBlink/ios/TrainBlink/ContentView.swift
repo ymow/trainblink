@@ -170,6 +170,60 @@ struct ContentView: View {
 
                     Divider()
 
+                    // Chat Rooms (Feature 5)
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Feature 5: 1-on-1 Chat Rooms")
+                            .font(.headline)
+
+                        HStack(spacing: 10) {
+                            // Unread badge
+                            HStack(spacing: 4) {
+                                Image(systemName: "bubble.left.and.bubble.right.fill")
+                                    .font(.caption)
+                                Text("\(appState.chatManager.activeChatRooms.count)")
+                                    .font(.caption)
+                                    .bold()
+                            }
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.blue.opacity(0.2))
+                            .cornerRadius(8)
+
+                            if appState.chatManager.totalUnreadCount > 0 {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "envelope.badge.fill")
+                                        .font(.caption)
+                                    Text("\(appState.chatManager.totalUnreadCount)")
+                                        .font(.caption)
+                                        .bold()
+                                }
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.red.opacity(0.2))
+                                .cornerRadius(8)
+                            }
+                        }
+
+                        NavigationLink(destination: ChatListView()) {
+                            HStack {
+                                Text("Open Chats")
+                                    .font(.subheadline)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                            }
+                            .padding()
+                            .background(Color.blue.opacity(0.1))
+                            .cornerRadius(8)
+                        }
+                    }
+                    .padding()
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
+                    .shadow(radius: 2)
+
+                    Divider()
+
                     // Other Tests
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Other Tests")
@@ -184,6 +238,12 @@ struct ContentView: View {
                             testAIReview()
                         }
                         .buttonStyle(.bordered)
+
+                        Button("Test: Chat Messages") {
+                            testChatMessages()
+                        }
+                        .buttonStyle(.bordered)
+                            .tint(.blue)
 
                         Button("Test: Error Tracking") {
                             testErrorTracking()
@@ -358,6 +418,42 @@ struct ContentView: View {
         }
 
         print("✅ Performance trace completed: \(result?.rawValue ?? "error")")
+    }
+
+    private func testChatMessages() {
+        // Create test peers
+        let peer1 = Peer(id: "test-peer-1", displayName: "Test User Alice")
+        let peer2 = Peer(id: "test-peer-2", displayName: "Test User Bob")
+
+        // Get or create chat rooms
+        _ = appState.chatManager.getChatRoom(with: peer1)
+        _ = appState.chatManager.getChatRoom(with: peer2)
+
+        // Send test messages
+        let _ = appState.chatManager.sendMessage(
+            text: "Hello from Alice! This is a test message.",
+            to: peer1.id,
+            isEphemeral: false
+        )
+
+        let _ = appState.chatManager.sendMessage(
+            text: "This message will disappear in 10 seconds! 👻",
+            to: peer2.id,
+            isEphemeral: true
+        )
+
+        // Simulate received message
+        let receivedMsg = ChatMessage.textMessage(
+            text: "Hey! I got your message. How are you?",
+            from: peer1.id,
+            to: appState.sessionID
+        )
+
+        if let data = try? JSONEncoder().encode(receivedMsg) {
+            appState.chatManager.handleReceivedMessage(data: data, from: peer1.id)
+        }
+
+        print("✅ Test chat messages created")
     }
 }
 

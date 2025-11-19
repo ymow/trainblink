@@ -502,6 +502,118 @@ if let remaining = EphemeralMessageManager.shared.timeRemaining(for: messageId) 
 
 ---
 
+## User Interface
+
+### ChatListView
+
+**Purpose**: Displays list of all active chat rooms with conversation previews.
+
+**Features**:
+- Active chat count and unread message count badges
+- List of all active chat rooms sorted by last message
+- Conversation preview with last message text
+- Unread message indicators (red badge)
+- Encounter count badges (shows frequency)
+- Ephemeral message indicators (timer icon)
+- Swipe to delete chat rooms
+- Empty state with helpful guidance
+
+**UI Components**:
+```swift
+// Header stats
+- Total active chats count
+- Total unread messages count
+
+// Chat room row
+- Avatar (blue circle with person icon)
+- Peer display name
+- Encounter count badge (if > 1)
+- Last message preview (truncated)
+- Ephemeral indicator (if applicable)
+- Timestamp (e.g., "2m ago")
+- Unread badge (count)
+```
+
+**Navigation**:
+- Tap chat row → Navigate to ChatRoomView
+- Swipe left → Delete chat room
+
+### ChatRoomView
+
+**Purpose**: Individual chat room UI for sending/receiving messages.
+
+**Features**:
+- Message bubble UI (sent vs received)
+- Ephemeral message countdown indicators
+- Delivery status icons (checkmarks)
+- Real-time message updates
+- Auto-scroll to latest message
+- Text input with multi-line support
+- Ephemeral mode toggle (10s vs permanent)
+- Read receipt tracking
+- Message timestamps
+
+**UI Components**:
+```swift
+// Header
+- Avatar (peer icon)
+- Peer display name
+- Encounter count
+- Ephemeral toggle (∞ / 10s)
+
+// Message bubble
+- Different colors for sent/received
+- Orange bubbles for ephemeral messages
+- Countdown timer for ephemeral (e.g., "5s")
+- Delivery status icons (sent messages)
+- Timestamp (e.g., "2:30 PM")
+- Text selection enabled
+
+// Input area
+- Multi-line text field (1-4 lines)
+- Send button (disabled when empty)
+- Submit on return key
+```
+
+**Message Bubble Styling**:
+- **Sent (regular)**: Blue background, white text, right-aligned
+- **Sent (ephemeral)**: Orange background, white text, right-aligned
+- **Received (regular)**: Gray background, black text, left-aligned
+- **Received (ephemeral)**: Light orange background, black text, left-aligned
+
+**Delivery Status Colors**:
+- Gray: Pending/Sending
+- Blue: Sent/Delivered
+- Green: Read
+- Red: Failed
+
+### Integration with ContentView
+
+Chat feature is accessible from the main ContentView:
+
+```swift
+// Feature 5: 1-on-1 Chat Rooms section
+- Active chat count badge
+- Unread message count badge (if > 0)
+- "Open Chats" button → Navigate to ChatListView
+- "Test: Chat Messages" button → Create sample chats
+```
+
+### Previews
+
+All views include SwiftUI previews for development:
+
+**ChatListView Previews**:
+- Empty state
+- With multiple chats
+- Single chat row
+
+**ChatRoomView Previews**:
+- Empty chat (no messages)
+- With messages (regular + ephemeral)
+
+---
+
 ## Future Enhancements
 
 ### Phase 2

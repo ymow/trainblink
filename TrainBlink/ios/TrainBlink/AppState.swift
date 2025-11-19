@@ -34,6 +34,7 @@ class AppState: ObservableObject {
     let geofenceManager = GeofenceManager()
     let multipeerManager = MultipeerManager()
     let contentSharingManager: ContentSharingManager
+    let chatManager = ChatManager.shared
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Initialization
@@ -43,13 +44,18 @@ class AppState: ObservableObject {
         self.contentSharingManager = ContentSharingManager(multipeerManager: multipeerManager)
 
         print("📱 AppState initialized with session: \(sessionID)")
+
+        // Initialize chat manager
+        chatManager.setMyPeerId(sessionID)
+        chatManager.setMultipeerManager(multipeerManager)
+
         setupGeofenceObservers()
         setupMultipeerObservers()
         setupContentSharingObservers()
 
-        // Wire up multipeer data received callback to content sharing
+        // Wire up multipeer data received callback to handle both chat and content
         multipeerManager.onDataReceived = { [weak self] data, fromPeerId in
-            self?.contentSharingManager.handleReceivedData(data, fromPeerId: fromPeerId)
+            self?.handleReceivedData(data, fromPeerId: fromPeerId)
         }
     }
 
@@ -261,6 +267,20 @@ class AppState: ObservableObject {
             contentId: contentId,
             toPeerId: toPeerId
         )
+    }
+
+    // MARK: - Data Reception Handler
+
+    /// Handle received data - routes to appropriate manager (chat or content)
+    private func handleReceivedData(_ data: Data, fromPeerId: String) {
+        // Try to decode as ChatMessage first (more common)
+        if let _ = try? JSONDecoder().decode(ChatMessage.self, from: data) {
+            chatManager.handleReceivedMessage(data: data, from: fromPeerId)
+            return
+        }
+
+        // Try to decode as ContentItem
+        contentSharingManager.handleReceivedData(data, fromPeerId: fromPeerId)
     }
 }
 
