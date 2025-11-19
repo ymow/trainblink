@@ -209,6 +209,9 @@ final class GeofenceManager: NSObject, ObservableObject {
             AnalyticsManager.shared.logStationEntered(station: station)
             AnalyticsManager.shared.setCustomKey("current_station", value: station.name)
 
+            // Update EncounterTrackingManager with current station (Feature 8)
+            EncounterTrackingManager.shared.updateCurrentStation(station)
+
             // Clear pending
             pendingEntryStation = nil
             entryDetectionTime = nil
@@ -265,6 +268,9 @@ final class GeofenceManager: NSObject, ObservableObject {
             // Log to Firebase Analytics
             AnalyticsManager.shared.logStationExited(station: station, durationSeconds: duration)
             AnalyticsManager.shared.setCustomKey("current_station", value: "none")
+
+            // Clear current station in EncounterTrackingManager (Feature 8)
+            EncounterTrackingManager.shared.updateCurrentStation(nil)
 
             // Clear state
             isInStation = false

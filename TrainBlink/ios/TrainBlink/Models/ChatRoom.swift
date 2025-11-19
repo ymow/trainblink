@@ -116,10 +116,28 @@ struct ChatRoom: Identifiable, Codable, Hashable, Equatable {
         encounterCount += 1
     }
 
+    /// Sync encounter count with EncounterTrackingManager (Feature 8)
+    mutating func syncEncounterCount() {
+        if let history = EncounterTrackingManager.shared.getHistory(for: peerId) {
+            encounterCount = history.encounterCount
+        }
+    }
+
     // MARK: - Static Constructors
 
     /// Create a new chat room with a peer
     static func createWith(peer: Peer, encounterCount: Int = 1) -> ChatRoom {
+        return ChatRoom(
+            peerId: peer.id,
+            peerDisplayName: peer.displayName,
+            createdAt: Date(),
+            encounterCount: encounterCount
+        )
+    }
+
+    /// Create a new chat room with encounter count from tracking (Feature 8)
+    static func createWithTracking(peer: Peer) -> ChatRoom {
+        let encounterCount = EncounterTrackingManager.shared.getHistory(for: peer.id)?.encounterCount ?? 1
         return ChatRoom(
             peerId: peer.id,
             peerDisplayName: peer.displayName,

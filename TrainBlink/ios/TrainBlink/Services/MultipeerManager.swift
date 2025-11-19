@@ -268,6 +268,12 @@ final class MultipeerManager: NSObject, ObservableObject {
                 signalStrength: peer.signalStrength
             )
 
+            // Record encounter (Feature 8)
+            EncounterTrackingManager.shared.recordEncounter(
+                with: peer,
+                interactionType: .discovery
+            )
+
             print("👤 Discovered peer: \(peer.displayName) (total: \(discoveredPeers.count))")
         }
     }
