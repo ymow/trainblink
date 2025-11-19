@@ -103,6 +103,24 @@ class AnalyticsManager(private val context: Context) {
         }
     }
 
+    // MARK: - Content Sharing Events
+
+    fun logContentShared(contentType: String, fileSizeBytes: Int, peerId: String) {
+        analytics.logEvent("content_shared") {
+            param("content_type", contentType)
+            param("file_size_bytes", fileSizeBytes.toLong())
+            param("peer_id", peerId.hashCode().toLong())
+        }
+    }
+
+    fun logContentReceived(contentType: String, fileSizeBytes: Int, peerId: String) {
+        analytics.logEvent("content_received") {
+            param("content_type", contentType)
+            param("file_size_bytes", fileSizeBytes.toLong())
+            param("peer_id", peerId.hashCode().toLong())
+        }
+    }
+
     // MARK: - Safety Events
 
     fun logPeerBlocked(reason: String) {
