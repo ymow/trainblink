@@ -17,6 +17,8 @@ enum TrainBlinkError: Error, LocalizedError {
     // P2P Errors
     case p2pConnectionTimeout
     case p2pConnectionFailed(reason: String)
+    case p2pAdvertisingFailed(reason: String)
+    case p2pBrowsingFailed(reason: String)
     case peerNotFound
     case peerDisconnected
 
@@ -45,6 +47,10 @@ enum TrainBlinkError: Error, LocalizedError {
             return "P2P connection timed out"
         case .p2pConnectionFailed(let reason):
             return "P2P connection failed: \(reason)"
+        case .p2pAdvertisingFailed(let reason):
+            return "P2P advertising failed: \(reason)"
+        case .p2pBrowsingFailed(let reason):
+            return "P2P browsing failed: \(reason)"
         case .peerNotFound:
             return "Peer not found"
         case .peerDisconnected:
@@ -125,6 +131,8 @@ final class ErrorTracker {
         switch error {
         case .p2pConnectionTimeout,
              .p2pConnectionFailed,
+             .p2pAdvertisingFailed,
+             .p2pBrowsingFailed,
              .peerNotFound,
              .peerDisconnected:
             AnalyticsManager.shared.logP2PConnectionFailed(

@@ -96,12 +96,37 @@ final class AnalyticsManager {
         Crashlytics.crashlytics().setCustomValue(peerCount, forKey: "p2p_peers_count")
     }
 
+    func logPeerDiscovered(peerId: String, signalStrength: Double?) {
+        var parameters: [String: Any] = [
+            "peer_id_hash": peerId.hashValue
+        ]
+        if let strength = signalStrength {
+            parameters["signal_strength"] = String(format: "%.2f", strength)
+        }
+        logEvent("peer_discovered", parameters: parameters)
+    }
+
+    func logPeerConnectionAttempted(peerId: String) {
+        let parameters: [String: Any] = [
+            "peer_id_hash": peerId.hashValue
+        ]
+        logEvent("peer_connection_attempted", parameters: parameters)
+    }
+
     func logPeerConnected(encounterCount: Int) {
         let parameters: [String: Any] = [
             "encounter_count": encounterCount
         ]
         logEvent("peer_connected", parameters: parameters)
         Crashlytics.crashlytics().log("Peer connected (encounter #\(encounterCount))")
+    }
+
+    func logPeerConnected(peerId: String, connectionDurationMs: Int) {
+        let parameters: [String: Any] = [
+            "peer_id_hash": peerId.hashValue,
+            "connection_duration_ms": connectionDurationMs
+        ]
+        logEvent("peer_connected", parameters: parameters)
     }
 
     // MARK: - 4. Content Sharing Events

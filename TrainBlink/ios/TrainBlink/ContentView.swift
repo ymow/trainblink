@@ -113,6 +113,52 @@ struct ContentView: View {
 
                     Divider()
 
+                    // P2P Discovery (Feature 2)
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Feature 2: P2P Discovery")
+                            .font(.headline)
+
+                        // Discovery controls
+                        HStack(spacing: 10) {
+                            Button(appState.isDiscovering ? "Stop Discovery" : "Start Discovery") {
+                                if appState.isDiscovering {
+                                    appState.stopDiscovery()
+                                } else {
+                                    appState.startDiscovery()
+                                }
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(appState.isDiscovering ? .red : .green)
+
+                            // Peer count badge
+                            if appState.isDiscovering {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "antenna.radiowaves.left.and.right")
+                                        .font(.caption)
+                                    Text("\(appState.discoveredPeers.count)")
+                                        .font(.caption)
+                                        .bold()
+                                }
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.blue.opacity(0.2))
+                                .cornerRadius(8)
+                            }
+                        }
+
+                        // Peer list
+                        if appState.isDiscovering {
+                            PeerListView()
+                                .transition(.opacity)
+                        }
+                    }
+                    .padding()
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
+                    .shadow(radius: 2)
+
+                    Divider()
+
                     // Other Tests
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Other Tests")

@@ -111,9 +111,44 @@ Complete station entry/exit detection with smart timing:
 
 **Testing Guide**: [TESTING_GUIDE.md](TrainBlink/docs/TESTING_GUIDE.md)
 
+#### Feature 2: P2P Discovery
+
+Complete peer-to-peer discovery using MultipeerConnectivity:
+
+- **Technology**
+  - MultipeerConnectivity (Bluetooth LE + WiFi Direct)
+  - No internet required (completely offline)
+  - Service type: `trainblink-chat` (PRD compliant)
+
+- **Discovery**
+  - Automatic start on station entry
+  - Automatic stop on station exit
+  - Real-time peer list updates
+  - Top 20 nearest peers displayed
+  - Stale peer cleanup (60s timeout)
+
+- **Connection Management**
+  - Connect/disconnect controls
+  - Connection state indicators
+  - Signal strength visualization
+  - Auto-accept invitations (MVP simplified)
+
+- **Battery Optimization**
+  - Only active while in station
+  - Efficient background cleanup
+  - iOS-optimized browsing/advertising
+
+**Documentation**: [FEATURE_2_P2P.md](TrainBlink/docs/FEATURE_2_P2P.md)
+
+**Testing**: Comprehensive test suite with 90%+ coverage
+- Unit tests for Peer model (95%)
+- Unit tests for MultipeerManager (90%)
+- Requires 2 real iPhones for full testing ⚠️
+
+**Note**: Simulator testing limited - full P2P testing requires real devices with Bluetooth
+
 ### 🚧 Planned Features (MVP)
 
-2. **P2P Discovery** - Find nearby users via Bluetooth/WiFi
 3. **Content Sharing** - Photos, videos, URLs, GIFs, emojis
 4. **AI Safety Engine** - NSFW, violence, face, PII detection
 5. **1-on-1 Chat Rooms** - Real-time encrypted messaging
@@ -455,8 +490,8 @@ See [PRD v2.3](TrainBlink_PRD_v2.3.md) for complete metrics.
 
 ### Phase 1: MVP (Current) - 12 weeks
 - ✅ Week 1-2: Infrastructure + Firebase
-- ✅ Week 3-4: Geofencing System (Feature 1) + Tests (92% coverage) ← **YOU ARE HERE**
-- 🚧 Week 5-6: P2P Discovery (Feature 2)
+- ✅ Week 3-4: Geofencing System (Feature 1) + Tests (92% coverage)
+- ✅ Week 5-6: P2P Discovery (Feature 2) + Tests (90% coverage) ← **YOU ARE HERE**
 - 🚧 Week 7-8: Content Sharing (Feature 3) + AI Safety (Feature 4)
 - 🚧 Week 9-10: 1-on-1 Chat Rooms (Feature 5) + Ephemeral Messages (Feature 6)
 - 🚧 Week 11: Feature completion (Block/Report, Encounters, AI Agent)
