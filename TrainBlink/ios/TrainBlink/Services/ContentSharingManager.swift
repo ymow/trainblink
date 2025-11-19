@@ -185,8 +185,8 @@ final class ContentSharingManager: ObservableObject {
         return .success(item)
     }
 
-    /// Review content with AI (placeholder for Feature 4 integration)
-    /// For now, auto-approves all content
+    /// Review content with AI (Feature 4: AI Safety)
+    /// Performs NSFW detection and face detection
     func reviewWithAI(contentId: String) async -> Result<ContentItem, ContentSharingError> {
         guard let index = pendingItems.firstIndex(where: { $0.id == contentId }) else {
             return .failure(.invalidContentData)
@@ -204,26 +204,127 @@ final class ContentSharingManager: ObservableObject {
         // Log to Firebase
         let reviewStart = Date()
 
-        // TODO: Integrate with Feature 4 (AI Safety) when implemented
-        // For now, auto-approve (simplified MVP)
-        try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s delay to simulate processing
+        // Only review photo content (text doesn't need AI review for MVP)
+        if item.type == .photo {
+            // Convert image data to UIImage
+            guard let imageData = item.imageData,
+                  let image = UIImage(data: imageData) else {
+                return .failure(.invalidContentData)
+            }
 
-        // Auto-approve
-        item = item.approveByAI(confidence: 0.1) // Low confidence = safe
-        pendingItems[index] = item
-        eventPublisher.send(.aiReviewCompleted(item, true))
+            // 1. NSFW Detection (required)
+            do {
+                let nsfwResult = try await NSFWDetector.shared.analyze(image)
 
-        // Log to Firebase
-        let reviewDuration = Date().timeIntervalSince(reviewStart)
-        AnalyticsManager.shared.logContentReviewedByAI(
-            contentType: item.type.rawValue,
-            reviewResult: "approved",
-            reviewDurationMs: Int(reviewDuration * 1000)
-        )
+                print("🤖 NSFW Detection: confidence=\(String(format: "%.2f", nsfwResult.confidence)), " +
+                      "isNSFW=\(nsfwResult.isNSFW)")
 
-        print("✅ AI Review completed for: \(item.id) - APPROVED")
+                // Log NSFW detection to Firebase
+                if nsfwResult.isNSFW {
+                    AnalyticsManager.shared.logAINSFWDetected(
+                        confidence: String(format: "%.2f", nsfwResult.confidence),
+                        action: "blocked"
+                    )
+                }
 
-        return .success(item)
+                // Reject if NSFW detected (confidence >= 0.3)
+                if nsfwResult.isNSFW {
+                    item = item.rejectByAI(
+                        reason: .nsfwDetected,
+                        confidence: nsfwResult.confidence
+                    )
+                    pendingItems[index] = item
+                    eventPublisher.send(.aiReviewCompleted(item, false))
+
+                    // Log to Firebase
+                    let reviewDuration = Date().timeIntervalSince(reviewStart)
+                    AnalyticsManager.shared.logContentReviewedByAI(
+                        contentType: item.type.rawValue,
+                        reviewResult: "blocked",
+                        reviewDurationMs: Int(reviewDuration * 1000)
+                    )
+
+                    print("❌ AI Review completed for: \(item.id) - REJECTED (NSFW)")
+
+                    return .success(item)
+                }
+
+                // 2. Face Detection (warning)
+                let faceResult = try await FaceDetector.shared.analyze(image)
+
+                print("🤖 Face Detection: count=\(faceResult.faceCount)")
+
+                // Log face detection to Firebase
+                if faceResult.hasFaces {
+                    AnalyticsManager.shared.logAIFaceDetected(
+                        faceCount: faceResult.faceCount,
+                        action: "warned"
+                    )
+                }
+
+                // Approve (user will be prompted for face confirmation in UI if needed)
+                item = item.approveByAI(confidence: nsfwResult.confidence)
+                pendingItems[index] = item
+                eventPublisher.send(.aiReviewCompleted(item, true))
+
+                // Log to Firebase
+                let reviewDuration = Date().timeIntervalSince(reviewStart)
+                AnalyticsManager.shared.logContentReviewedByAI(
+                    contentType: item.type.rawValue,
+                    reviewResult: "approved",
+                    reviewDurationMs: Int(reviewDuration * 1000)
+                )
+
+                print("✅ AI Review completed for: \(item.id) - APPROVED" +
+                      (faceResult.hasFaces ? " (⚠️ \(faceResult.faceCount) face(s) detected)" : ""))
+
+                return .success(item)
+
+            } catch {
+                // AI processing failed - log error but allow content (fail open)
+                print("❌ AI Review failed for: \(item.id) - \(error.localizedDescription)")
+
+                ErrorTracker.record(
+                    .modelInferenceFailed(modelType: "nsfw_face"),
+                    context: [
+                        "content_id": item.id,
+                        "error": error.localizedDescription
+                    ]
+                )
+
+                // Approve with warning (fail-open strategy for better UX)
+                item = item.approveByAI(confidence: nil)
+                pendingItems[index] = item
+                eventPublisher.send(.aiReviewCompleted(item, true))
+
+                let reviewDuration = Date().timeIntervalSince(reviewStart)
+                AnalyticsManager.shared.logContentReviewedByAI(
+                    contentType: item.type.rawValue,
+                    reviewResult: "approved_with_error",
+                    reviewDurationMs: Int(reviewDuration * 1000)
+                )
+
+                print("⚠️ AI Review completed for: \(item.id) - APPROVED (with error)")
+
+                return .success(item)
+            }
+        } else {
+            // Text content - auto-approve (no AI review needed for MVP)
+            item = item.approveByAI(confidence: 0.0)
+            pendingItems[index] = item
+            eventPublisher.send(.aiReviewCompleted(item, true))
+
+            let reviewDuration = Date().timeIntervalSince(reviewStart)
+            AnalyticsManager.shared.logContentReviewedByAI(
+                contentType: item.type.rawValue,
+                reviewResult: "approved",
+                reviewDurationMs: Int(reviewDuration * 1000)
+            )
+
+            print("✅ AI Review completed for: \(item.id) - APPROVED (text, no review needed)")
+
+            return .success(item)
+        }
     }
 
     /// Send content to peer
