@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!--
+    ⚠️ IMPORTANT: This is a TEMPLATE file
+
+    To use Firebase in TrainBlink:
+    1. Go to Firebase Console: https://console.firebase.google.com/
+    2. Create a new project named "TrainBlink"
+    3. Add an iOS app with Bundle ID: com.trainblink.app
+    4. Download the actual GoogleService-Info.plist
+    5. Replace this template file with the downloaded file
+    6. Never commit the actual GoogleService-Info.plist to git (it's in .gitignore)
+    -->
+
+    <key>API_KEY</key>
+    <string>YOUR_API_KEY_HERE</string>
+
+    <key>GCM_SENDER_ID</key>
+    <string>YOUR_GCM_SENDER_ID</string>
+
+    <key>PLIST_VERSION</key>
+    <string>1</string>
+
+    <key>BUNDLE_ID</key>
+    <string>com.trainblink.app</string>
+
+    <key>PROJECT_ID</key>
+    <string>trainblink</string>
+
+    <key>STORAGE_BUCKET</key>
+    <string>trainblink.appspot.com</string>
+
+    <key>IS_ADS_ENABLED</key>
+    <false/>
+
+    <key>IS_ANALYTICS_ENABLED</key>
+    <true/>
+
+    <key>IS_APPINVITE_ENABLED</key>
+    <false/>
+
+    <key>IS_GCM_ENABLED</key>
+    <true/>
+
+    <key>IS_SIGNIN_ENABLED</key>
+    <false/>
+
+    <key>GOOGLE_APP_ID</key>
+    <string>YOUR_GOOGLE_APP_ID</string>
+
+    <key>DATABASE_URL</key>
+    <string>https://trainblink.firebaseio.com</string>
+</dict>
+</plist>
