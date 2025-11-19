@@ -1,0 +1,342 @@
+[
+  {
+    "id": "1000",
+    "name": "基隆車站",
+    "name_en": "Keelung",
+    "lat": 25.1313,
+    "lng": 121.7403,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線"]
+  },
+  {
+    "id": "1001",
+    "name": "台北車站",
+    "name_en": "Taipei",
+    "lat": 25.0478,
+    "lng": 121.5170,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線", "東部幹線"]
+  },
+  {
+    "id": "1002",
+    "name": "松山車站",
+    "name_en": "Songshan",
+    "lat": 25.0493,
+    "lng": 121.5776,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線"]
+  },
+  {
+    "id": "1003",
+    "name": "萬華車站",
+    "name_en": "Wanhua",
+    "lat": 25.0338,
+    "lng": 121.5004,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線"]
+  },
+  {
+    "id": "1004",
+    "name": "板橋車站",
+    "name_en": "Banqiao",
+    "lat": 25.0141,
+    "lng": 121.4635,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線"]
+  },
+  {
+    "id": "1005",
+    "name": "樹林車站",
+    "name_en": "Shulin",
+    "lat": 24.9961,
+    "lng": 121.4202,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線"]
+  },
+  {
+    "id": "1006",
+    "name": "桃園車站",
+    "name_en": "Taoyuan",
+    "lat": 25.0019,
+    "lng": 121.3133,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線"]
+  },
+  {
+    "id": "1007",
+    "name": "中壢車站",
+    "name_en": "Zhongli",
+    "lat": 24.9537,
+    "lng": 121.2257,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線"]
+  },
+  {
+    "id": "1008",
+    "name": "新竹車站",
+    "name_en": "Hsinchu",
+    "lat": 24.8014,
+    "lng": 120.9714,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線"]
+  },
+  {
+    "id": "1009",
+    "name": "竹南車站",
+    "name_en": "Zhunan",
+    "lat": 24.6897,
+    "lng": 120.8791,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線"]
+  },
+  {
+    "id": "1010",
+    "name": "苗栗車站",
+    "name_en": "Miaoli",
+    "lat": 24.5669,
+    "lng": 120.8214,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線"]
+  },
+  {
+    "id": "1011",
+    "name": "豐原車站",
+    "name_en": "Fengyuan",
+    "lat": 24.2539,
+    "lng": 120.7238,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線"]
+  },
+  {
+    "id": "1012",
+    "name": "台中車站",
+    "name_en": "Taichung",
+    "lat": 24.1369,
+    "lng": 120.6850,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線"]
+  },
+  {
+    "id": "1013",
+    "name": "彰化車站",
+    "name_en": "Changhua",
+    "lat": 24.0816,
+    "lng": 120.5390,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線"]
+  },
+  {
+    "id": "1014",
+    "name": "員林車站",
+    "name_en": "Yuanlin",
+    "lat": 23.9589,
+    "lng": 120.5743,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線"]
+  },
+  {
+    "id": "1015",
+    "name": "斗六車站",
+    "name_en": "Douliu",
+    "lat": 23.7111,
+    "lng": 120.5418,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線"]
+  },
+  {
+    "id": "1016",
+    "name": "嘉義車站",
+    "name_en": "Chiayi",
+    "lat": 23.4794,
+    "lng": 120.4407,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線"]
+  },
+  {
+    "id": "1017",
+    "name": "台南車站",
+    "name_en": "Tainan",
+    "lat": 22.9971,
+    "lng": 120.2121,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線"]
+  },
+  {
+    "id": "1018",
+    "name": "高雄車站",
+    "name_en": "Kaohsiung",
+    "lat": 22.6391,
+    "lng": 120.3018,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線", "南迴線"]
+  },
+  {
+    "id": "1019",
+    "name": "屏東車站",
+    "name_en": "Pingtung",
+    "lat": 22.6730,
+    "lng": 120.4841,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["西部幹線"]
+  },
+  {
+    "id": "1020",
+    "name": "花蓮車站",
+    "name_en": "Hualien",
+    "lat": 23.9933,
+    "lng": 121.6011,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["東部幹線"]
+  },
+  {
+    "id": "1021",
+    "name": "台東車站",
+    "name_en": "Taitung",
+    "lat": 22.7933,
+    "lng": 121.1236,
+    "type": "TRA",
+    "radius": 500,
+    "lines": ["南迴線"]
+  },
+  {
+    "id": "THSR-1",
+    "name": "南港站",
+    "name_en": "Nangang",
+    "lat": 25.0526,
+    "lng": 121.6067,
+    "type": "THSR",
+    "radius": 500,
+    "lines": ["高鐵"]
+  },
+  {
+    "id": "THSR-2",
+    "name": "台北站",
+    "name_en": "Taipei",
+    "lat": 25.0478,
+    "lng": 121.5170,
+    "type": "THSR",
+    "radius": 500,
+    "lines": ["高鐵"]
+  },
+  {
+    "id": "THSR-3",
+    "name": "板橋站",
+    "name_en": "Banqiao",
+    "lat": 25.0141,
+    "lng": 121.4635,
+    "type": "THSR",
+    "radius": 500,
+    "lines": ["高鐵"]
+  },
+  {
+    "id": "THSR-4",
+    "name": "桃園站",
+    "name_en": "Taoyuan",
+    "lat": 25.0125,
+    "lng": 121.2153,
+    "type": "THSR",
+    "radius": 500,
+    "lines": ["高鐵"]
+  },
+  {
+    "id": "THSR-5",
+    "name": "新竹站",
+    "name_en": "Hsinchu",
+    "lat": 24.8395,
+    "lng": 121.0404,
+    "type": "THSR",
+    "radius": 500,
+    "lines": ["高鐵"]
+  },
+  {
+    "id": "THSR-6",
+    "name": "苗栗站",
+    "name_en": "Miaoli",
+    "lat": 24.5668,
+    "lng": 120.8543,
+    "type": "THSR",
+    "radius": 500,
+    "lines": ["高鐵"]
+  },
+  {
+    "id": "THSR-7",
+    "name": "台中站",
+    "name_en": "Taichung",
+    "lat": 24.1123,
+    "lng": 120.6173,
+    "type": "THSR",
+    "radius": 500,
+    "lines": ["高鐵"]
+  },
+  {
+    "id": "THSR-8",
+    "name": "彰化站",
+    "name_en": "Changhua",
+    "lat": 23.8629,
+    "lng": 120.5686,
+    "type": "THSR",
+    "radius": 500,
+    "lines": ["高鐵"]
+  },
+  {
+    "id": "THSR-9",
+    "name": "雲林站",
+    "name_en": "Yunlin",
+    "lat": 23.7182,
+    "lng": 120.4053,
+    "type": "THSR",
+    "radius": 500,
+    "lines": ["高鐵"]
+  },
+  {
+    "id": "THSR-10",
+    "name": "嘉義站",
+    "name_en": "Chiayi",
+    "lat": 23.4593,
+    "lng": 120.3117,
+    "type": "THSR",
+    "radius": 500,
+    "lines": ["高鐵"]
+  },
+  {
+    "id": "THSR-11",
+    "name": "台南站",
+    "name_en": "Tainan",
+    "lat": 23.0004,
+    "lng": 120.2875,
+    "type": "THSR",
+    "radius": 500,
+    "lines": ["高鐵"]
+  },
+  {
+    "id": "THSR-12",
+    "name": "左營站",
+    "name_en": "Zuoying",
+    "lat": 22.6871,
+    "lng": 120.3073,
+    "type": "THSR",
+    "radius": 500,
+    "lines": ["高鐵"]
+  }
+]

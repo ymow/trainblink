@@ -12,61 +12,158 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
+    @State private var selectedStation: Station = Station.samples[0]
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 20) {
-                Text("🚄 TrainBlink")
-                    .font(.largeTitle)
-                    .bold()
+            ScrollView {
+                VStack(spacing: 20) {
+                    // Header
+                    Text("🚄 TrainBlink")
+                        .font(.largeTitle)
+                        .bold()
 
-                if appState.isInStation {
-                    Text("🚉 In Station: \(appState.currentStation?.name ?? "")")
-                        .font(.headline)
-                } else {
-                    Text("Waiting for station...")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                }
+                    // Geofence Status Card
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Geofence Status")
+                            .font(.headline)
 
-                Divider()
+                        if appState.isInStation {
+                            HStack {
+                                Text("🚉")
+                                    .font(.title)
+                                VStack(alignment: .leading) {
+                                    Text(appState.currentStation?.name ?? "Unknown")
+                                        .font(.headline)
+                                    Text(appState.currentStation?.type.rawValue ?? "")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                            }
+                            .padding()
+                            .background(Color.green.opacity(0.1))
+                            .cornerRadius(10)
+                        } else {
+                            HStack {
+                                Text("🚶")
+                                    .font(.title)
+                                Text("Not in station")
+                                    .font(.headline)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                            }
+                            .padding()
+                            .background(Color.gray.opacity(0.1))
+                            .cornerRadius(10)
+                        }
 
-                // Example buttons to trigger analytics events
-                VStack(spacing: 15) {
-                    Button("Test: Enter Station") {
-                        testEnterStation()
-                    }
-                    .buttonStyle(.borderedProminent)
-
-                    Button("Test: Content Sharing") {
-                        testContentSharing()
-                    }
-                    .buttonStyle(.bordered)
-
-                    Button("Test: AI Review") {
-                        testAIReview()
-                    }
-                    .buttonStyle(.bordered)
-
-                    Button("Test: Error Tracking") {
-                        testErrorTracking()
-                    }
-                    .buttonStyle(.bordered)
-                        .tint(.red)
-
-                    Button("Test: Performance Trace") {
-                        Task {
-                            await testPerformanceTrace()
+                        // Location Permission Status
+                        HStack {
+                            Image(systemName: authStatusIcon)
+                                .foregroundColor(authStatusColor)
+                            Text(authStatusText)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
                     }
-                    .buttonStyle(.bordered)
-                        .tint(.green)
+                    .padding()
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
+                    .shadow(radius: 2)
+
+                    Divider()
+
+                    // Geofencing Tests
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Feature 1: Geofencing")
+                            .font(.headline)
+
+                        // Station Selector
+                        Picker("Select Station", selection: $selectedStation) {
+                            ForEach(Station.samples, id: \.self) { station in
+                                Text(station.name).tag(station)
+                            }
+                        }
+                        .pickerStyle(.menu)
+
+                        HStack(spacing: 10) {
+                            Button("Simulate Entry") {
+                                testEnterStation(selectedStation)
+                            }
+                            .buttonStyle(.borderedProminent)
+
+                            Button("Simulate Exit") {
+                                testExitStation()
+                            }
+                            .buttonStyle(.bordered)
+                            .disabled(!appState.isInStation)
+                        }
+
+                        Button("Request Location Permission") {
+                            appState.geofenceManager.requestAuthorization()
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.orange)
+                    }
+                    .padding()
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
+                    .shadow(radius: 2)
+
+                    Divider()
+
+                    // Other Tests
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Other Tests")
+                            .font(.headline)
+
+                        Button("Test: Content Sharing") {
+                            testContentSharing()
+                        }
+                        .buttonStyle(.bordered)
+
+                        Button("Test: AI Review") {
+                            testAIReview()
+                        }
+                        .buttonStyle(.bordered)
+
+                        Button("Test: Error Tracking") {
+                            testErrorTracking()
+                        }
+                        .buttonStyle(.bordered)
+                            .tint(.red)
+
+                        Button("Test: Performance Trace") {
+                            Task {
+                                await testPerformanceTrace()
+                            }
+                        }
+                        .buttonStyle(.bordered)
+                            .tint(.green)
+                    }
+                    .padding()
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
+                    .shadow(radius: 2)
+
+                    // Database Info
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("Station Database")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text("TRA: \(StationDatabase.shared.count(ofType: .tra)) stations")
+                            .font(.caption2)
+                        Text("THSR: \(StationDatabase.shared.count(ofType: .thsr)) stations")
+                            .font(.caption2)
+                        Text("Total: \(StationDatabase.shared.totalCount) stations")
+                            .font(.caption2)
+                            .bold()
+                    }
+                    .padding()
                 }
                 .padding()
-
-                Spacer()
             }
-            .padding()
             .navigationTitle("TrainBlink Demo")
             .onAppear {
                 AnalyticsManager.shared.logScreenView(
@@ -77,15 +174,63 @@ struct ContentView: View {
         }
     }
 
+    // MARK: - Computed Properties
+
+    private var authStatusIcon: String {
+        switch appState.geofenceManager.authorizationStatus {
+        case .authorizedAlways:
+            return "checkmark.circle.fill"
+        case .authorizedWhenInUse:
+            return "location.circle.fill"
+        case .denied, .restricted:
+            return "xmark.circle.fill"
+        case .notDetermined:
+            return "questionmark.circle.fill"
+        @unknown default:
+            return "questionmark.circle"
+        }
+    }
+
+    private var authStatusColor: Color {
+        switch appState.geofenceManager.authorizationStatus {
+        case .authorizedAlways:
+            return .green
+        case .authorizedWhenInUse:
+            return .orange
+        case .denied, .restricted:
+            return .red
+        case .notDetermined:
+            return .gray
+        @unknown default:
+            return .gray
+        }
+    }
+
+    private var authStatusText: String {
+        switch appState.geofenceManager.authorizationStatus {
+        case .authorizedAlways:
+            return "Location: Always (✓)"
+        case .authorizedWhenInUse:
+            return "Location: When In Use (needs Always)"
+        case .denied:
+            return "Location: Denied (✗)"
+        case .restricted:
+            return "Location: Restricted (✗)"
+        case .notDetermined:
+            return "Location: Not Determined"
+        @unknown default:
+            return "Location: Unknown"
+        }
+    }
+
     // MARK: - Test Methods
 
-    private func testEnterStation() {
-        let station = Station(
-            id: "1000",
-            name: "台北車站",
-            type: .tra
-        )
+    private func testEnterStation(_ station: Station) {
         appState.enterStation(station)
+    }
+
+    private func testExitStation() {
+        appState.exitStation()
     }
 
     private func testContentSharing() {

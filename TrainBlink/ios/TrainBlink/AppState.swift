@@ -18,33 +18,61 @@ class AppState: ObservableObject {
     @Published var currentStation: Station?
     @Published var sessionID: String = UUID().uuidString
 
+    // MARK: - Services
+
+    let geofenceManager = GeofenceManager()
+    private var cancellables = Set<AnyCancellable>()
+
     // MARK: - Initialization
 
     init() {
         print("📱 AppState initialized with session: \(sessionID)")
+        setupGeofenceObservers()
     }
 
-    // MARK: - Methods
+    // MARK: - Setup
+
+    private func setupGeofenceObservers() {
+        // Observe geofence manager state
+        geofenceManager.$isInStation
+            .assign(to: &$isInStation)
+
+        geofenceManager.$currentStation
+            .assign(to: &$currentStation)
+
+        // Observe geofence events
+        geofenceManager.eventPublisher
+            .sink { [weak self] event in
+                self?.handleGeofenceEvent(event)
+            }
+            .store(in: &cancellables)
+    }
+
+    // MARK: - Event Handling
+
+    private func handleGeofenceEvent(_ event: GeofenceEvent) {
+        switch event {
+        case .entered(let station, _):
+            print("🚉 App: User entered \(station.name)")
+            // Future: Trigger P2P discovery, show welcome notification, etc.
+
+        case .exited(let station, _):
+            print("🚶 App: User exited \(station.name)")
+            // Future: Cleanup (close chats, delete content, stop P2P)
+
+        case .error(let error):
+            print("❌ App: Geofence error - \(error.localizedDescription)")
+        }
+    }
+
+    // MARK: - Methods (for backward compatibility)
 
     func enterStation(_ station: Station) {
-        isInStation = true
-        currentStation = station
-
-        // Log to Analytics
-        AnalyticsManager.shared.logStationEntered(station: station)
-
-        print("🚉 Entered station: \(station.name)")
+        geofenceManager.simulateEntry(to: station)
     }
 
     func exitStation() {
         guard let station = currentStation else { return }
-
-        // Log to Analytics
-        AnalyticsManager.shared.logStationExited(station: station)
-
-        isInStation = false
-        currentStation = nil
-
-        print("🚶 Exited station: \(station.name)")
+        geofenceManager.simulateExit(from: station)
     }
 }
