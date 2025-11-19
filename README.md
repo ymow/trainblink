@@ -402,6 +402,15 @@ Complete chat messaging system for peer-to-peer communication:
 
 **Documentation**: [FEATURE_5_CHAT_ROOMS.md](TrainBlink/docs/FEATURE_5_CHAT_ROOMS.md)
 
+**User Interface**
+- **ChatListView**: Conversation list with unread badges, encounter counts, swipe-to-delete
+- **ChatRoomView**: Message bubbles (sent/received), ephemeral countdown, multi-line input
+- Real-time message updates with auto-scroll
+- Delivery status indicators (pending/sent/delivered/read/failed)
+- Ephemeral mode toggle (∞ / 10s)
+- Empty states with helpful guidance
+- SwiftUI previews for development
+
 **Testing**: Comprehensive test suite with 90%+ coverage
 - Unit tests for ChatMessage model (95%)
 - Unit tests for ChatRoom model (95%)
@@ -410,7 +419,7 @@ Complete chat messaging system for peer-to-peer communication:
 - Performance tests (100 messages, 100 chat rooms)
 - 30+ test methods, all passing ✅
 
-**Note**: Complete backend infrastructure. Ready for SwiftUI chat UI implementation. Fully integrated with Features 2, 6, 7, 8.
+**Status**: ✅ Complete (backend + UI). Fully integrated with Features 2, 6, 7, 8.
 
 ### 🚧 Planned Features (MVP)
 
