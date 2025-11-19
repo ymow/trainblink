@@ -423,6 +423,13 @@ final class ContentSharingManager: ObservableObject {
     func handleReceivedData(_ data: Data, fromPeerId: String) {
         print("📥 Received content data from: \(fromPeerId) (\(data.count) bytes)")
 
+        // Check if sender is blocked (Feature 7)
+        if BlockingManager.shared.isBlocked(peerId: fromPeerId) {
+            print("🚫 Rejecting content from blocked peer: \(fromPeerId)")
+            AnalyticsManager.shared.logContentRejectedFromBlockedPeer(senderId: fromPeerId)
+            return
+        }
+
         // Decode content item
         guard let item = decodeContentData(data, fromPeerId: fromPeerId) else {
             print("❌ Failed to decode content data")
@@ -560,5 +567,18 @@ final class ContentSharingManager: ObservableObject {
         transferTimers[contentId]?.invalidate()
         transferTimers.removeValue(forKey: contentId)
         activeTransfers.removeValue(forKey: contentId)
+    }
+}
+
+// MARK: - Analytics Extensions (Feature 7)
+
+extension AnalyticsManager {
+
+    /// Log content rejected from blocked peer
+    func logContentRejectedFromBlockedPeer(senderId: String) {
+        let parameters: [String: Any] = [
+            "sender_id": senderId
+        ]
+        logEvent("content_rejected_blocked_peer", parameters: parameters)
     }
 }

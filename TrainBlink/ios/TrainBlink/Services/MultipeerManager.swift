@@ -204,9 +204,10 @@ final class MultipeerManager: NSObject, ObservableObject {
     }
 
     /// Get top N nearest peers (sorted by signal strength)
+    /// - Note: Automatically filters out blocked peers (Feature 7)
     func topNearestPeers(limit: Int = 20) -> [Peer] {
         return discoveredPeers
-            .filter { !$0.isStale }
+            .filter { !$0.isStale && !BlockingManager.shared.isBlocked(peerId: $0.id) }
             .sorted { ($0.signalStrength ?? 0) > ($1.signalStrength ?? 0) }
             .prefix(limit)
             .map { $0 }
@@ -292,6 +293,13 @@ extension MultipeerManager: MCNearbyServiceAdvertiserDelegate {
         invitationHandler: @escaping (Bool, MCSession?) -> Void
     ) {
         print("📨 Received invitation from: \(peerID.displayName)")
+
+        // Check if peer is blocked (Feature 7)
+        if BlockingManager.shared.isBlocked(peerId: peerID.displayName) {
+            print("🚫 Rejecting invitation from blocked peer: \(peerID.displayName)")
+            invitationHandler(false, nil)
+            return
+        }
 
         // Auto-accept invitations (simplified for MVP)
         // TODO: Add user confirmation UI in later version
